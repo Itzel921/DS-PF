@@ -1,5 +1,4 @@
----
-```markdown
+
 # 🧠 Sistema de Exploración de Revistas Científicas - UNISON
 
 Este proyecto permite explorar revistas académicas según su área, catálogo y otros criterios. Utiliza Python, Flask y Bootstrap, y está basado en datos de SCImago y Resurchify.
