@@ -1,54 +1,51 @@
-#En este archivo se lee un archivo CSV y se convierte a JSON
+#En este archivo se lee el csv y se genera el json
+
 import os
 import csv
 import json
 
-def read_csv_files(folder_path):
-    revistas = {}
+# Carpetas de entrada y salida
+csv_areas_path = "datos/csv/areas"
+csv_catalogos_path = "datos/csv/catalogos"
+json_output_path = "datos/json/revistas.json"
 
-    # Leer archivos de áreas
-    areas_file = os.path.join(folder_path, 'areas', 'areas.csv')
-    with open(areas_file, mode='r', encoding='utf-8') as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            revista = row['titulo']
-            area = row['area']
-            if revista not in revistas:
-                revistas[revista] = {'areas': [], 'catalogos': []}
-            revistas[revista]['areas'].append(area)
+revistas_dict = {}
 
-    # Leer archivos de catálogos
-    catalogos_file = os.path.join(folder_path, 'catalogos', 'catalogos.csv')
-    with open(catalogos_file, mode='r', encoding='utf-8') as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            revista = row['titulo']
-            catalogo = row['catalogo']
-            if revista not in revistas:
-                revistas[revista] = {'areas': [], 'catalogos': []}
-            revistas[revista]['catalogos'].append(catalogo)
+# Función auxiliar para agregar datos
+def agregar_info(ruta, tipo):
+    for archivo in os.listdir(ruta):
+        if archivo.endswith(".csv"):
+            try:
+                # Intentar primero con UTF-8
+                with open(os.path.join(ruta, archivo), encoding="utf-8") as f:
+                    reader = csv.reader(f)
+                    process_file(reader, tipo)
+            except UnicodeDecodeError:
+                # Si falla, intentar con latin-1
+                with open(os.path.join(ruta, archivo), encoding="latin-1") as f:
+                    reader = csv.reader(f)
+                    process_file(reader, tipo)
 
-    return revistas
+def process_file(reader, tipo):
+    next(reader)  # saltar encabezado si lo tiene
+    for row in reader:
+        if len(row) >= 2:  # Verificar que hay al menos 2 columnas
+            titulo = row[0].strip().lower()
+            valor = row[1].strip()
+            if titulo not in revistas_dict:
+                revistas_dict[titulo] = {"areas": [], "catalogos": []}
+            if valor not in revistas_dict[titulo][tipo]:
+                revistas_dict[titulo][tipo].append(valor)
 
+# Crear directorios si no existen
+os.makedirs(os.path.dirname(json_output_path), exist_ok=True)
 
-def guardar_json(data, salida):
-    with open(salida, 'w', encoding='utf-8') as json_file: # Abre el archivo en modo escritura
-        json.dump(data, json_file, ensure_ascii=False, indent=4)  # Escribe los datos en formato JSON
+# Leer áreas y catálogos
+agregar_info(csv_areas_path, "areas")
+agregar_info(csv_catalogos_path, "catalogos")
 
+# Guardar como JSON
+with open(json_output_path, "w", encoding="utf-8") as json_file:
+    json.dump(revistas_dict, json_file, indent=2, ensure_ascii=False)
 
-
-
-def main():
-    folder = 'datos/csv'
-    salida = 'datos/json/revistas.json'
-    
-    revistas = read_csv_files(folder)
-    guardar_json(revistas, salida)
-    
-    # Verificar que el archivo JSON puede ser leído
-    with open(salida, 'r', encoding='utf-8') as json_file:
-        loaded_data = json.load(json_file)
-        print("Datos cargados desde JSON:", loaded_data)
-
-if __name__ == "__main__":
-    main()
+print(f"JSON generado correctamente en: {json_output_path}")
