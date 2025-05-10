@@ -3,6 +3,7 @@ import json
 import time
 import requests
 import argparse
+import threading
 from bs4 import BeautifulSoup
 
 # Obtener la ruta base del proyecto
@@ -178,8 +179,40 @@ revistas_a_procesar = revistas_items[inicio:fin]
 print(f"{LOG_INFO} Procesando {'en reverso ' if args.reverso else ''}desde el índice {inicio} hasta {fin}")
 print(f"{LOG_INFO} Total de revistas a procesar: {len(revistas_a_procesar)}")
 
+# Variable global para pausar el proceso
+is_paused = False
+
+def toggle_pause():
+    """Alterna el estado de pausa."""
+    global is_paused
+    is_paused = not is_paused
+    estado = "pausado" if is_paused else "reanudado"
+    print(f"{LOG_INFO} Proceso {estado}.")
+
+def contar_archivos_json():
+    """Cuenta los elementos JSON en el archivo revistas_scimagojr.json."""
+    if os.path.exists(OUTPUT_JSON):
+        with open(OUTPUT_JSON, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            return len(data)
+    return 0
+
+# Hilo para escuchar comandos de pausa
+def escuchar_comandos():
+    while True:
+        comando = input("Escribe 'pausar' para pausar/reanudar el proceso: ").strip().lower()
+        if comando == 'pausar':
+            toggle_pause()
+
+# Iniciar el hilo de comandos
+threading.Thread(target=escuchar_comandos, daemon=True).start()
+
 procesados_count = 0
 for titulo_revista, _ in revistas_a_procesar:
+    while is_paused:
+        print(f"{LOG_INFO} Proceso en pausa. Archivos JSON generados: {contar_archivos_json()}")
+        time.sleep(5)  # Esperar mientras está pausado
+
     if titulo_revista in revistas_data:
         print(f"{LOG_INFO} Revista ya procesada anteriormente: {titulo_revista}")
         continue
