@@ -2,7 +2,23 @@ import os
 import json
 import time
 import requests
+import argparse
 from bs4 import BeautifulSoup
+
+# Obtener la ruta base del proyecto
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Configurar rutas absolutas
+INPUT_JSON = os.path.join(BASE_DIR, 'datos', 'json', 'revistas.json')
+OUTPUT_JSON = os.path.join(BASE_DIR, 'datos', 'json', 'revistas_scimagojr.json')
+BACKUP_JSON = os.path.join(BASE_DIR, 'datos', 'json', 'revistas_scimagojr_backup.json')
+
+# Configurar argumentos de línea de comandos
+parser = argparse.ArgumentParser(description='Scraper de ScimagoJR con punto de inicio configurable')
+parser.add_argument('--inicio', type=int, default=0, help='Índice desde donde empezar a procesar (default: 0)')
+parser.add_argument('--fin', type=int, help='Índice donde terminar de procesar (opcional)')
+parser.add_argument('--reverso', action='store_true', help='Procesar las revistas en orden inverso')
+args = parser.parse_args()
 
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, Gecko) Chrome/123.0.0.0 Safari/537.36'
@@ -10,9 +26,6 @@ HEADERS = {
 
 SCIMAGO_BASE_URL = 'https://www.scimagojr.com'
 SEARCH_URL = SCIMAGO_BASE_URL + '/journalsearch.php?q='
-INPUT_JSON = 'datos/json/revistas.json'
-OUTPUT_JSON = 'datos/json/revistas_scimagojr.json'
-BACKUP_JSON = 'datos/json/revistas_scimagojr_backup.json'
 
 # Constantes para símbolos de log
 LOG_SUCCESS = "✅"
@@ -145,13 +158,33 @@ def scrape_journal_data(url):
 with open(INPUT_JSON, 'r', encoding='utf-8') as f:
     revistas_input = json.load(f)
 
+# Calcular el rango de revistas a procesar
+inicio = args.inicio
+fin = args.fin if args.fin is not None else len(revistas_input)
+revistas_items = list(revistas_input.items())
+
+# Si es en reverso, invertimos el orden
+if args.reverso:
+    revistas_items = revistas_items[::-1]
+    # Ajustamos inicio y fin para mantener la lógica con el orden invertido
+    if args.fin is not None:
+        temp_inicio = len(revistas_items) - fin
+        temp_fin = len(revistas_items) - inicio
+        inicio = temp_inicio
+        fin = temp_fin
+
+revistas_a_procesar = revistas_items[inicio:fin]
+
+print(f"{LOG_INFO} Procesando {'en reverso ' if args.reverso else ''}desde el índice {inicio} hasta {fin}")
+print(f"{LOG_INFO} Total de revistas a procesar: {len(revistas_a_procesar)}")
+
 procesados_count = 0
-for titulo_revista in revistas_input:
+for titulo_revista, _ in revistas_a_procesar:
     if titulo_revista in revistas_data:
         print(f"{LOG_INFO} Revista ya procesada anteriormente: {titulo_revista}")
         continue
 
-    print(f"{LOG_PROCESSING} Buscando información de la revista: {titulo_revista}")
+    print(f"{LOG_PROCESSING} Buscando información de la revista: {titulo_revista} (índice: {inicio + procesados_count})")
     try:
         url_revista = find_journal_url(titulo_revista)
         if not url_revista:
@@ -172,3 +205,4 @@ for titulo_revista in revistas_input:
 # Asegurar que los datos finales estén guardados
 save_data_safely(revistas_data)
 print(f"{LOG_SUCCESS} Proceso finalizado. Nuevas revistas procesadas: {procesados_count}")
+print(f"{LOG_INFO} Rango procesado: {inicio} - {fin}")
