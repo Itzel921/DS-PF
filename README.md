@@ -1,3 +1,4 @@
+---
 ```markdown
 # 🧠 Sistema de Exploración de Revistas Científicas - UNISON
 
@@ -78,4 +79,5 @@ Durante el desarrollo de este proyecto, se hizo uso de asistentes digitales como
 ## 🏫 Universidad de Sonora
 
 Este sistema fue desarrollado como parte del proyecto final para la materia de Desarrollo de Sistemas, bajo el marco institucional de la Universidad de Sonora.
+
 
