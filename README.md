@@ -33,7 +33,7 @@ proyecto/
    ```bash
    git clone https://github.com/usuario/repositorio.git
    cd repositorio
-````
+
 
 2. Crea un entorno virtual:
 
