@@ -1,4 +1,3 @@
-
 # 🧠 Sistema de Exploración de Revistas Científicas - UNISON
 
 Este proyecto permite explorar revistas académicas según su área, catálogo y otros criterios. Utiliza Python, Flask y Bootstrap, y está basado en datos de SCImago y Resurchify.
@@ -65,6 +64,19 @@ proyecto/
 * 🧾 Créditos y presentación
 * 🔐 Login de usuario (extra)
 * ♻️ Cacheo y actualización mensual de datos (extra)
+
+## 🌿 Ramas del Proyecto
+
+El proyecto está organizado en las siguientes ramas para facilitar el desarrollo colaborativo:
+
+* `main`: Rama principal con la versión estable del proyecto.
+* `parte1-json`: Implementación de la funcionalidad para convertir archivos CSV a JSON.
+* `parte2-scraper`: Desarrollo del web scraper para obtener datos de SCImago y Resurchify.
+* `parte3-frontend`: Creación de la interfaz web utilizando Flask y Bootstrap.
+* `login-feature`: Implementación del sistema de login para usuarios.
+* `actualizar-cache`: Funcionalidad para la actualización mensual de datos con seguimiento de la última visita.
+
+---
 
 ## 👨‍💻 Integrantes del equipo
 
