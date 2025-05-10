@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import os
 import unicodedata
+import chardet
 
 # Definir rutas base
 BASE_DIR = Path(__file__).parent.parent
@@ -21,49 +22,110 @@ def limpiar_titulo(titulo):
 def limpiar_nombre_area(area):
     return area.replace(' RadGridExport', '').replace('_RadGridExport', '')
 
+def detectar_encoding(archivo):
+    """Detecta la codificaci贸n de un archivo usando chardet"""
+    with open(archivo, 'rb') as f:
+        raw_data = f.read()
+        result = chardet.detect(raw_data)
+        return result['encoding']
+
 def leer_csvs_areas():
     dataframes = []
+    encodings = ['utf-8', 'latin1', 'cp1252', 'iso-8859-1']
+    
     for csv_file in AREAS_DIR.glob('*.csv'):
         try:
             area_name = limpiar_nombre_area(csv_file.stem)
-            for encoding in ['utf-8', 'latin1', 'cp1252']:
+            
+            # Primero intentar con detecci贸n autom谩tica
+            try:
+                detected_encoding = detectar_encoding(csv_file)
+                if detected_encoding:
+                    try:
+                        df = pd.read_csv(csv_file, encoding=detected_encoding, names=['nombre_revista'])
+                        df = df[df['nombre_revista'] != 'TITULO:']
+                        df['area'] = area_name
+                        dataframes.append(df)
+                        print(f'Archivo {csv_file.name} le铆do con codificaci贸n detectada: {detected_encoding}')
+                        continue
+                    except Exception:
+                        pass
+            except Exception:
+                pass
+            
+            # Si la detecci贸n autom谩tica falla, probar con las codificaciones conocidas
+            success = False
+            for encoding in encodings:
                 try:
                     df = pd.read_csv(csv_file, encoding=encoding, names=['nombre_revista'])
                     df = df[df['nombre_revista'] != 'TITULO:']
                     df['area'] = area_name
                     dataframes.append(df)
-                    print(f'Archivo {csv_file.name} le韉o con codificaci髇 {encoding}')
+                    print(f'Archivo {csv_file.name} le铆do con codificaci贸n {encoding}')
+                    success = True
                     break
-                except UnicodeDecodeError:
+                except Exception as e:
                     continue
+            
+            if not success:
+                print(f'No se pudo leer el archivo {csv_file.name} con ninguna codificaci贸n')
+                
         except Exception as e:
             print(f'Error al procesar {csv_file}: {e}')
+    
     return pd.concat(dataframes, ignore_index=True) if dataframes else pd.DataFrame()
 
 def leer_csvs_catalogos():
     dataframes = []
+    encodings = ['utf-8', 'latin1', 'cp1252', 'iso-8859-1']
+    
     for csv_file in CATALOGOS_DIR.glob('*.csv'):
         try:
             catalogo_name = limpiar_nombre_area(csv_file.stem)
-            for encoding in ['utf-8', 'latin1', 'cp1252']:
+            
+            # Primero intentar con detecci贸n autom谩tica
+            try:
+                detected_encoding = detectar_encoding(csv_file)
+                if detected_encoding:
+                    try:
+                        df = pd.read_csv(csv_file, encoding=detected_encoding, names=['nombre_revista'])
+                        df = df[df['nombre_revista'] != 'TITULO:']
+                        df['catalogo'] = catalogo_name
+                        dataframes.append(df)
+                        print(f'Archivo {csv_file.name} le铆do con codificaci贸n detectada: {detected_encoding}')
+                        continue
+                    except Exception:
+                        pass
+            except Exception:
+                pass
+            
+            # Si la detecci贸n autom谩tica falla, probar con las codificaciones conocidas
+            success = False
+            for encoding in encodings:
                 try:
                     df = pd.read_csv(csv_file, encoding=encoding, names=['nombre_revista'])
                     df = df[df['nombre_revista'] != 'TITULO:']
                     df['catalogo'] = catalogo_name
                     dataframes.append(df)
-                    print(f'Archivo {csv_file.name} le韉o con codificaci髇 {encoding}')
+                    print(f'Archivo {csv_file.name} le铆do con codificaci贸n {encoding}')
+                    success = True
                     break
-                except UnicodeDecodeError:
+                except Exception as e:
                     continue
+            
+            if not success:
+                print(f'No se pudo leer el archivo {csv_file.name} con ninguna codificaci贸n')
+                
         except Exception as e:
             print(f'Error al procesar {csv_file}: {e}')
+    
     return pd.concat(dataframes, ignore_index=True) if dataframes else pd.DataFrame()
 
 def procesar_y_generar_json():
-    print('Leyendo archivos CSV de 醨eas...')
+    print('Leyendo archivos CSV de 锟絩eas...')
     df_areas = leer_csvs_areas()
 
-    print('Leyendo archivos CSV de cat醠ogos...')
+    print('Leyendo archivos CSV de cat锟絣ogos...')
     df_catalogos = leer_csvs_catalogos()
 
     revistas_dict = {}
@@ -101,7 +163,7 @@ def procesar_y_generar_json():
     try:
         with open(OUTPUT_FILE, 'r', encoding='utf-8') as f:
             data_verificacion = json.load(f)
-            print('\nVerificaci髇 exitosa del archivo JSON:')
+            print('\nVerificaci锟絥 exitosa del archivo JSON:')
             print('Ejemplo de una entrada:')
             primer_revista = next(iter(data_verificacion.items()))
             print(json.dumps({primer_revista[0]: primer_revista[1]}, indent=2, ensure_ascii=False))
