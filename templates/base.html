@@ -18,28 +18,31 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
-            <a class="navbar-brand" href="{{ url_for('index') }}">
-                <img src="{{ url_for('static', filename='img/logo-unison.png') }}" alt="UNISON">
+            <a class="navbar-brand" href="/">
+                <img src="{{ url_for('static', filename='images/logo_unison.png') }}" alt="Logo Universidad de Sonora" height="50">
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
+                <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('index') }}">Inicio</a>
+                        <a class="nav-link" href="/">Inicio</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('areas') }}">Áreas</a>
+                        <a class="nav-link" href="/areas">Áreas</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('catalogos') }}">Catálogos</a>
+                        <a class="nav-link" href="/catalogos">Catálogos</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('explorar') }}">Explorar</a>
+                        <a class="nav-link" href="/explorar">Explorar</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('creditos') }}">Créditos</a>
+                        <a class="nav-link" href="/buscar">Búsqueda</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/creditos">Créditos</a>
                     </li>
                 </ul>
                 <form class="d-flex" action="{{ url_for('buscar') }}" method="get">
@@ -75,6 +78,16 @@
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tables = document.querySelectorAll('table');
+            tables.forEach(table => {
+                if (table.id !== 'no-datatable') {
+                    $(table).DataTable();
+                }
+            });
+        });
+    </script>
     {% block scripts %}{% endblock %}
 </body>
 </html>
