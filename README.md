@@ -81,6 +81,7 @@ El proyecto está organizado en las siguientes ramas para facilitar el desarroll
 ## 👨‍💻 Integrantes del equipo
 
 Moises Perez Aello
+Alberto Yahir Renteria Luna
 Itzel Alejandra Monroy Alvarez
 
 ## 🤖 Asistentes digitales utilizados
