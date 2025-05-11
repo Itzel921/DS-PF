@@ -110,6 +110,16 @@ class ResultsCombiner:
         results1 = self.load_json(file1_path)
         results2 = self.load_json(file2_path)
         
+        # Extraer IDs de las URLs para ambos conjuntos de resultados
+        for results in [results1, results2]:
+            for journal_name, entry in results.items():
+                if entry.get('url'):
+                    # Buscar el ID en la URL usando una expresión regular
+                    url = entry['url']
+                    id_match = re.search(r'[?&]q=(\d+)&', url)
+                    if id_match:
+                        entry['id'] = id_match.group(1)
+        
         # Iniciar el proceso de combinación
         for journal_title, entry1 in results1.items():
             normalized_title = self.normalize_title(journal_title)
@@ -181,6 +191,16 @@ def analyze_json_content(file_path):
             data = json.load(f)
             
         total_entries = len(data)
+        
+        # Extraer IDs de las URLs y agregar a las entradas
+        for journal_name, entry in data.items():
+            if entry.get('url'):
+                # Buscar el ID en la URL usando una expresión regular
+                url = entry['url']
+                id_match = re.search(r'[?&]q=(\d+)&', url)
+                if id_match:
+                    entry['id'] = id_match.group(1)
+        
         found_journals = sum(1 for entry in data.values() if entry.get('id'))
         missing_journals = total_entries - found_journals
         
