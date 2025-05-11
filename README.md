@@ -55,6 +55,53 @@ proyecto/
 
 > Asegúrate de tener Python 3.9 o superior.
 
+## 🚀 Funcionalidades Implementadas
+
+* ✅ Lectura de archivos JSON para cargar datos de revistas y SCImago.
+* ✅ Interfaz web con Flask + Bootstrap.
+* ✅ Exploración por área, catálogo, letra y búsqueda.
+  - **Áreas**: Lista de áreas disponibles con enlaces a las revistas asociadas.
+  - **Catálogos**: Lista de catálogos disponibles con enlaces a las revistas asociadas.
+  - **Explorar por Letra**: Tabla dinámica de revistas que inician con una letra específica.
+  - **Búsqueda**: Tabla dinámica con resultados basados en palabras clave.
+* ✅ Créditos: Página con los nombres y fotos de los desarrolladores.
+
+## 📄 Rutas Principales
+
+| Ruta            | Descripción                                                                 |
+|-----------------|-----------------------------------------------------------------------------|
+| `/`             | Página de inicio con introducción al sistema.                              |
+| `/areas`        | Lista de áreas disponibles.                                                |
+| `/catalogos`    | Lista de catálogos disponibles.                                            |
+| `/explorar`     | Abecedario con enlaces para explorar revistas por letra inicial.           |
+| `/buscar`       | Página de búsqueda con resultados dinámicos.                              |
+| `/creditos`     | Página con los créditos del equipo desarrollador.                         |
+| `/area/<area>`  | Detalles de las revistas asociadas a un área específica.                  |
+| `/catalogo/<catalogo>` | Detalles de las revistas asociadas a un catálogo específico.        |
+| `/explorar/<letra>` | Tabla de revistas que inician con una letra específica.                |
+| `/revista/<titulo>` | Detalles completos de una revista específica.                         |
+
+## 🧪 Instrucciones para Pruebas
+
+1. **Explorar Áreas**:
+   - Accede a `/areas` para ver la lista de áreas.
+   - Haz clic en un área para ver las revistas asociadas.
+
+2. **Explorar Catálogos**:
+   - Accede a `/catalogos` para ver la lista de catálogos.
+   - Haz clic en un catálogo para ver las revistas asociadas.
+
+3. **Explorar por Letra**:
+   - Accede a `/explorar` y selecciona una letra para ver las revistas que inician con esa letra.
+
+4. **Buscar Revistas**:
+   - Accede a `/buscar` e ingresa palabras clave para buscar revistas.
+
+5. **Ver Detalles de una Revista**:
+   - Haz clic en el título de una revista en cualquier tabla para ver sus detalles completos.
+
+---
+
 ## 🔍 Funcionalidades planeadas
 
 * ✅ Lectura de archivos CSV y creación de `revistas.json`
