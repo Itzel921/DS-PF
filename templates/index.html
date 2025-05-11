@@ -1,25 +1,70 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Exploración de Revistas Científicas - UNISON</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="#">UNISON - Revistas Científicas</a>
-        </div>
-    </nav>
+{% extends "base.html" %}
 
-    <div class="container mt-4">
-        <h1>Bienvenido al Sistema de Exploración de Revistas Científicas</h1>
-        <p>Explora revistas académicas según su área, catálogo y otros criterios.</p>
+{% block title %}Sistema de Exploración de Revistas UNISON{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 text-center mb-5">
+        <h1>Sistema de Exploración de Revistas Científicas</h1>
+        <p class="lead">Universidad de Sonora</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Explorar por Áreas</h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">Navega por las diferentes áreas del conocimiento para encontrar revistas especializadas.</p>
+                <a href="{{ url_for('areas') }}" class="btn btn-primary">Ver Áreas</a>
+            </div>
+        </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-</body>
-</html>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Explorar por Catálogos</h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">Encuentra revistas indexadas en diferentes catálogos y bases de datos.</p>
+                <a href="{{ url_for('catalogos') }}" class="btn btn-primary">Ver Catálogos</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Explorar por Letra</h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">Navega alfabéticamente por todas las revistas disponibles en el sistema.</p>
+                <a href="{{ url_for('explorar') }}" class="btn btn-primary">Explorar</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Acerca del Sistema</h5>
+            </div>
+            <div class="card-body">
+                <p>Este sistema permite explorar y buscar en el catálogo de revistas científicas, utilizando información de SCImago Journal Rank (SJR) y otros índices importantes. Características principales:</p>
+                <ul>
+                    <li>Búsqueda por áreas temáticas</li>
+                    <li>Filtrado por catálogos de indexación</li>
+                    <li>Exploración alfabética</li>
+                    <li>Información detallada de cada revista</li>
+                    <li>Indicadores bibliométricos (H-Index)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
