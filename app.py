@@ -227,7 +227,20 @@ def perfil():
         return redirect(url_for('login'))
 
     user = session['user']
-    return render_template('perfil.html', user=user['name'])
+    revistas_guardadas = []
+    
+    if 'saved_articles' in user:
+        revistas, scimagojr = cargar_datos()
+        revistas_guardadas = [
+            {
+                'titulo': titulo,
+                'info': revistas.get(titulo, {}),
+                'scimagojr': scimagojr.get(titulo, {})
+            }
+            for titulo in user['saved_articles']
+        ]
+    
+    return render_template('perfil.html', user=user['name'], revistas=revistas_guardadas)
 
 # Ruta para cerrar sesión
 @app.route('/logout')
