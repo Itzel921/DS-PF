@@ -185,5 +185,13 @@ def add_to_profile():
 def newnoticias():
     return render_template('Newnoticias.html')
 
+@app.route('/info1')
+def info1():
+    return render_template('info1.html')
+
+@app.route('/info2')
+def info2():
+    return render_template('info2.html')
+
 if __name__ == '__main__':
     app.run(debug=True)
