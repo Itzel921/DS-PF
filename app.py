@@ -36,7 +36,16 @@ def cargar_datos():
 # Rutas principales
 @app.route('/')
 def index():
-    return render_template('index.html')
+    # Load the last visit date from the JSON file
+    ultima_visita = None
+    try:
+        with open('datos/json/ultima_visita.json', 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            ultima_visita = data.get('ultima_visita', 'No disponible')
+    except (FileNotFoundError, json.JSONDecodeError):
+        ultima_visita = 'No disponible'
+
+    return render_template('index.html', ultima_visita=ultima_visita)
 
 @app.route('/areas')
 def areas():
@@ -184,6 +193,14 @@ def add_to_profile():
 @app.route('/newnoticias')
 def newnoticias():
     return render_template('Newnoticias.html')
+
+@app.route('/info1')
+def info1():
+    return render_template('info1.html')
+
+@app.route('/info2')
+def info2():
+    return render_template('info2.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

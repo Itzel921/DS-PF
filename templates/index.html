@@ -72,6 +72,34 @@
         </div>
     </div>
 
+    <!-- Bloque 1 Section -->
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header" style="background-color: var(--primary-color); color: white;">
+                <i class="fas fa-graduation-cap fa-2x"></i>
+                <h5 class="card-title mt-2">Recursos Educativos</h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">Explora una variedad de recursos educativos diseñados para apoyar tu aprendizaje y desarrollo académico.</p>
+                <a href="{{ url_for('info1') }}" class="btn btn-outline-primary">Ver Recursos</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bloque 2 Section -->
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header" style="background-color: var(--primary-color); color: white;">
+                <i class="fas fa-microchip fa-2x"></i>
+                <h5 class="card-title mt-2">Tendencias Tecnológicas</h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">Descubre los avances tecnológicos más recientes y su impacto en la investigación y la educación.</p>
+                <a href="{{ url_for('info2') }}" class="btn btn-outline-primary">Explorar Tendencias</a>
+            </div>
+        </div>
+    </div>
+
     <!-- Noticias Section -->
     <div class="col-md-4 mb-4">
         <div class="card h-100">
@@ -124,6 +152,13 @@
                 </ul>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- Footer Section -->
+<div class="row mt-4">
+    <div class="col-md-12 text-center">
+        <p class="text-muted">Última actualización del sistema: <strong>{{ ultima_visita }}</strong></p>
     </div>
 </div>
 
