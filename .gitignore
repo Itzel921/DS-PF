@@ -22,7 +22,7 @@ wheels/
 
 # Archivos de caché
 datos/cache/
-*.html
+datos/cache/*.html
 
 # Virtual Environment
 venv/
