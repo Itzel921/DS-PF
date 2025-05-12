@@ -1,28 +1,44 @@
 # 🧠 Sistema de Exploración de Revistas Científicas - UNISON
 
-Este proyecto permite explorar revistas académicas según su área, catálogo y otros criterios. Utiliza Python, Flask y Bootstrap, y está basado en datos de SCImago y Resurchify.
+Este proyecto permite explorar revistas académicas según su área, catálogo y otros criterios. Utiliza Python, Flask y Bootstrap, integrando datos de SCImago y Resurchify. Incluye autenticación de usuarios y guardado de revistas favoritas.
 
 ## 📁 Estructura del Proyecto
 
-```
-
+```plaintext
 proyecto/
 │
 ├── datos/
-│   ├── csv/
-│   │   ├── areas/
-│   │   └── catalogos/
-│   └── json/
+│   ├── cache/          # Caché de páginas web scrapeadas
+│   ├── csv/           # Datos en formato CSV
+│   └── json/          # Datos procesados en JSON
 │       ├── revistas.json
-│       └── scimagojr.json
+│       └── revistas_scimagojr.json
 │
-├── scraper/             # Web scraper para SCImago
-├── frontend/            # Flask + Bootstrap (parte web)
-├── utils/               # Funciones comunes
-├── static/              # Archivos CSS / JS / imágenes
-├── templates/           # HTML con Jinja
-├── app.py               # Archivo principal de Flask
-└── requirements.txt
+├── scraper/
+│   ├── resurchify_scraper.py  # Scraper para Resurchify
+│   └── sjr_scraper.py         # Scraper para SCImago
+│
+├── static/
+│   ├── css/           # Estilos CSS
+│   ├── js/            # Scripts JavaScript
+│   └── images/        # Imágenes del sitio
+│
+├── templates/         # Plantillas HTML con Jinja2
+│   ├── base.html     # Plantilla base
+│   ├── index.html    # Página principal
+│   ├── areas.html    # Vista de áreas
+│   └── ...           # Otras plantillas
+│
+├── utils/            # Utilidades y helpers
+│   ├── combine_results.py
+│   └── generar_json_revistas.py
+│
+├── instance/         # Datos de la instancia
+│   └── users.db      # Base de datos SQLite
+│
+├── app.py           # Aplicación principal Flask
+├── config.py        # Configuración de la aplicación
+└── requirements.txt # Dependencias del proyecto
 
 ````
 
@@ -30,15 +46,17 @@ proyecto/
 
 1. Clona este repositorio:
    ```bash
-   git clone https://github.com/usuario/repositorio.git
-   cd repositorio
+   git clone https://github.com/Itzel921/DS-PF
+   cd DS-PF
 
 
 2. Crea un entorno virtual:
-
    ```bash
    python -m venv venv
-   source venv/bin/activate  # En Windows: venv\Scripts\activate
+   # En Windows:
+   .\venv\Scripts\activate
+   # En Unix o MacOS:
+   source venv/bin/activate
    ```
 
 3. Instala las dependencias:
@@ -48,95 +66,103 @@ proyecto/
    ```
 
 4. Ejecuta la aplicación:
-
    ```bash
-   flask run
+   python app.py
    ```
 
-> Asegúrate de tener Python 3.9 o superior.
+> 📌 Requisitos: Python 3.9 o superior
 
-## 🚀 Funcionalidades Implementadas
+## 🌟 Características Principales
 
-* ✅ Lectura de archivos JSON para cargar datos de revistas y SCImago.
-* ✅ Interfaz web con Flask + Bootstrap.
-* ✅ Exploración por área, catálogo, letra y búsqueda.
-  - **Áreas**: Lista de áreas disponibles con enlaces a las revistas asociadas.
-  - **Catálogos**: Lista de catálogos disponibles con enlaces a las revistas asociadas.
-  - **Explorar por Letra**: Tabla dinámica de revistas que inician con una letra específica.
-  - **Búsqueda**: Tabla dinámica con resultados basados en palabras clave.
-* ✅ Créditos: Página con los nombres y fotos de los desarrolladores.
+### Sistema de Exploración
+* 📚 **Exploración por Áreas**:
+  - Listado de áreas académicas
+  - Filtrado de revistas por área
+  - Visualización de métricas por área
 
-## 📄 Rutas Principales
+* 📑 **Catálogos**:
+  - Navegación por catálogos académicos
+  - Filtrado por índices y bases de datos
+  - Información detallada de indexación
 
-| Ruta            | Descripción                                                                 |
-|-----------------|-----------------------------------------------------------------------------|
-| `/`             | Página de inicio con introducción al sistema.                              |
-| `/areas`        | Lista de áreas disponibles.                                                |
-| `/catalogos`    | Lista de catálogos disponibles.                                            |
-| `/explorar`     | Abecedario con enlaces para explorar revistas por letra inicial.           |
-| `/buscar`       | Página de búsqueda con resultados dinámicos.                              |
-| `/creditos`     | Página con los créditos del equipo desarrollador.                         |
-| `/area/<area>`  | Detalles de las revistas asociadas a un área específica.                  |
-| `/catalogo/<catalogo>` | Detalles de las revistas asociadas a un catálogo específico.        |
-| `/explorar/<letra>` | Tabla de revistas que inician con una letra específica.                |
-| `/revista/<titulo>` | Detalles completos de una revista específica.                         |
+* 🔤 **Exploración Alfabética**:
+  - Navegación por letra inicial
+  - Vista rápida de revistas
+  - Ordenamiento alfabético
 
-## 🧪 Instrucciones para Pruebas
+* 🔍 **Búsqueda Avanzada**:
+  - Búsqueda por título
+  - Resultados en tiempo real
+  - Filtros combinados
 
-1. **Explorar Áreas**:
-   - Accede a `/areas` para ver la lista de áreas.
-   - Haz clic en un área para ver las revistas asociadas.
+### Sistema de Usuarios
+* 👤 **Autenticación**:
+  - Inicio de sesión
+  - Registro de usuarios
+  - Gestión de sesiones
 
-2. **Explorar Catálogos**:
-   - Accede a `/catalogos` para ver la lista de catálogos.
-   - Haz clic en un catálogo para ver las revistas asociadas.
+* ⭐ **Funciones de Usuario**:
+  - Guardar revistas favoritas
+  - Historial de búsquedas
+  - Personalización de perfil
 
-3. **Explorar por Letra**:
-   - Accede a `/explorar` y selecciona una letra para ver las revistas que inician con esa letra.
+## 📡 API y Rutas
 
-4. **Buscar Revistas**:
-   - Accede a `/buscar` e ingresa palabras clave para buscar revistas.
+### Rutas Públicas
+| Ruta | Método | Descripción |
+|------|---------|------------|
+| `/` | GET | Página principal |
+| `/areas` | GET | Lista de áreas |
+| `/catalogos` | GET | Lista de catálogos |
+| `/explorar` | GET | Exploración alfabética |
+| `/buscar` | GET | Búsqueda de revistas |
+| `/creditos` | GET | Página de créditos |
 
-5. **Ver Detalles de una Revista**:
-   - Haz clic en el título de una revista en cualquier tabla para ver sus detalles completos.
+### Rutas Dinámicas
+| Ruta | Método | Descripción |
+|------|---------|------------|
+| `/area/<area>` | GET | Revistas por área |
+| `/catalogo/<catalogo>` | GET | Revistas por catálogo |
+| `/explorar/<letra>` | GET | Revistas por inicial |
+| `/revista/<titulo>` | GET | Detalles de revista |
 
----
+### Rutas de Usuario
+| Ruta | Método | Descripción |
+|------|---------|------------|
+| `/login` | GET/POST | Inicio de sesión |
+| `/perfil` | GET | Perfil de usuario |
+| `/logout` | GET | Cerrar sesión |
+| `/add_to_profile` | POST | Guardar revista |
 
-## 🔍 Funcionalidades planeadas
+## 🌿 Estructura de Ramas
 
-* ✅ Lectura de archivos CSV y creación de `revistas.json`
-* 🔄 Web scraper para obtener información de SCImago y Resurchify
-* 🖥️ Interfaz web con Flask + Bootstrap
-* 🔍 Exploración por área, catálogo, letra y búsqueda
-* 🧾 Créditos y presentación
-* 🔐 Login de usuario (extra)
-* ♻️ Cacheo y actualización mensual de datos (extra)
+* `main`: Versión estable del proyecto
+* `feature/json-data-structure`: Manejo de datos JSON
+* `feature/scimagojr-scraper`: Scraper de SCImago
+* `feature/flask-frontend`: Interfaz web
+* `feature/user-authentication`: Sistema de usuarios
 
-## 🌿 Ramas del Proyecto
+## 🛠️ Tecnologías Utilizadas
 
-El proyecto está organizado en las siguientes ramas para facilitar el desarrollo colaborativo:
+* **Backend**: Python, Flask
+* **Frontend**: HTML, CSS, Bootstrap, JavaScript
+* **Base de Datos**: SQLite, JSON
+* **Herramientas**: Git, Virtual Environment
+* **Bibliotecas**: flask-session, pathlib, requests
 
-* `main`: Rama principal con la versión estable del proyecto.
-* `parte1-json`: Implementación de la funcionalidad para convertir archivos CSV a JSON.
-* `parte2-scraper`: Desarrollo del web scraper para obtener datos de SCImago y Resurchify.
-* `parte3-frontend`: Creación de la interfaz web utilizando Flask y Bootstrap.
-* `login-feature`: Implementación del sistema de login para usuarios.
-* `actualizar-cache`: Funcionalidad para la actualización mensual de datos con seguimiento de la última visita.
+## 👥 Equipo de Desarrollo
 
----
+* Moises Perez Aello
+* Alberto Yahir Renteria Luna
+* Itzel Alejandra Monroy Alvarez
 
-## 👨‍💻 Integrantes del equipo
+## 🎓 Información Académica
 
-Moises Perez Aello
-Alberto Yahir Renteria Luna
-Itzel Alejandra Monroy Alvarez
+**Universidad**: Universidad de Sonora  
+**Materia**: Desarrollo de Sistemas IV  
+**Semestre**: 4to  
+**Periodo**: 2025
 
-## 🤖 Asistentes digitales utilizados
-
-Durante el desarrollo de este proyecto, se hizo uso de asistentes digitales como **ChatGPT** y **Copilot** para organizar el flujo de trabajo, generar código base y refinar funcionalidades. Todas las decisiones de diseño y desarrollo fueron supervisadas por los integrantes del equipo.
-
-## 🏫 Universidad de Sonora
-
-Este sistema fue desarrollado como parte del proyecto final para la materia de Desarrollo de Sistemas, bajo el marco institucional de la Universidad de Sonora.
+🔍 **Nota**: Este proyecto utiliza datos de SCImago Journal & Country Rank y Resurchify para propósitos académicos.
 
 
