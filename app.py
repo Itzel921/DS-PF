@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session
 import json
 import os
+import hashlib
+import sqlite3
 from pathlib import Path
 from flask_session import Session
 
@@ -32,6 +34,46 @@ def cargar_datos():
                 scimagojr = {}
 
     return revistas, scimagojr
+
+def init_user_db():
+    db_path = os.path.join(BASE_DIR, 'instance', 'users.db')
+    os.makedirs(os.path.dirname(db_path), exist_ok=True)
+    
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+    c.execute('''CREATE TABLE IF NOT EXISTS users
+                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  name TEXT NOT NULL,
+                  email TEXT UNIQUE NOT NULL,
+                  password TEXT NOT NULL)''')
+    conn.commit()
+    conn.close()
+
+def get_user_by_email(email):
+    db_path = os.path.join(BASE_DIR, 'instance', 'users.db')
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+    c.execute('SELECT * FROM users WHERE email = ?', (email,))
+    user = c.fetchone()
+    conn.close()
+    return user
+
+def create_user(name, email, password):
+    db_path = os.path.join(BASE_DIR, 'instance', 'users.db')
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+    hashed_password = hashlib.sha256(password.encode()).hexdigest()
+    try:
+        c.execute('INSERT INTO users (name, email, password) VALUES (?, ?, ?)', (name, email, hashed_password))
+        conn.commit()
+        return True
+    except sqlite3.IntegrityError:
+        return False
+    finally:
+        conn.close()
+
+# Asegurarse de que la base de datos se inicialice al arrancar la aplicación
+init_user_db()
 
 # Rutas principales
 @app.route('/')
@@ -135,20 +177,53 @@ def revista_detalle(titulo):
                          revista=revista_info, 
                          scimagojr=scimagojr_info)
 
+# Ruta para registrar usuarios
+@app.route('/registro', methods=['GET', 'POST'])
+def registro():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+
+        if not all([name, email, password, confirm_password]):
+            return render_template('registro.html', error='Todos los campos son obligatorios.')
+
+        if password != confirm_password:
+            return render_template('registro.html', error='Las contraseñas no coinciden.')
+
+        # Verificar si el usuario ya existe
+        if get_user_by_email(email):
+            return render_template('registro.html', error='El correo electrónico ya está registrado.')
+
+        # Crear el usuario
+        if create_user(name, email, password):
+            # Iniciar sesión automáticamente
+            session['user'] = {
+                'name': name,
+                'email': email
+            }
+            return redirect(url_for('index'))
+        else:
+            return render_template('registro.html', error='Error al crear el usuario. Intente nuevamente.')
+
+    return render_template('registro.html')
+
 # Ruta para iniciar sesión
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
+        hashed_password = hashlib.sha256(password.encode()).hexdigest()
 
-        # Validar credenciales (esto es un ejemplo simple)
-        if email == 'usuario@ejemplo.com' and password == 'contraseña':
+        user = get_user_by_email(email)
+        if user and user[3] == hashed_password:  # user[3] es la contraseña hasheada
             session['user'] = {
-                'name': 'Juan Pérez',
-                'email': email
+                'name': user[1],  # user[1] es el nombre
+                'email': user[2]  # user[2] es el email
             }
-            return redirect(url_for('index'))  # Redirigir a la página de inicio
+            return redirect(url_for('index'))
         else:
             return render_template('inicio_sesion.html', error='Credenciales incorrectas')
 
@@ -161,7 +236,20 @@ def perfil():
         return redirect(url_for('login'))
 
     user = session['user']
-    return render_template('perfil.html', user=user['name'])
+    revistas_guardadas = []
+    
+    if 'saved_articles' in user:
+        revistas, scimagojr = cargar_datos()
+        revistas_guardadas = [
+            {
+                'titulo': titulo,
+                'info': revistas.get(titulo, {}),
+                'scimagojr': scimagojr.get(titulo, {})
+            }
+            for titulo in user['saved_articles']
+        ]
+    
+    return render_template('perfil.html', user=user['name'], revistas=revistas_guardadas)
 
 # Ruta para cerrar sesión
 @app.route('/logout')

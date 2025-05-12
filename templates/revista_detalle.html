@@ -12,7 +12,34 @@
             </ol>
         </nav>
 
-        <h1 class="mb-4">{{ titulo }}</h1>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>{{ titulo }}</h1>            {% if session.get('user') %}
+                {% if titulo in session.get('user', {}).get('saved_articles', []) %}
+                <button class="btn btn-success" disabled>
+                    <i class="fas fa-check-circle"></i> Revista Guardada
+                </button>
+                <small class="d-block text-muted mt-1">
+                    <i class="fas fa-info-circle"></i> Esta revista está en tu colección
+                </small>
+                {% else %}
+                <button id="guardarRevista" class="btn btn-outline-primary">
+                    <i class="fas fa-bookmark"></i> Guardar en Mi Colección
+                </button>
+                <small class="d-block text-muted mt-1">
+                    <i class="fas fa-info-circle"></i> Guarda esta revista para acceder fácilmente después
+                </small>
+                {% endif %}
+            {% else %}
+            <div>
+                <a href="{{ url_for('login') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-sign-in-alt"></i> Inicia sesión para guardar
+                </a>
+                <small class="d-block text-muted mt-1">
+                    <i class="fas fa-info-circle"></i> Crea una cuenta para guardar tus revistas favoritas
+                </small>
+            </div>
+            {% endif %}
+        </div>
 
         <div class="row">
             <!-- Información de Scimagojr -->
@@ -115,4 +142,77 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('guardarRevista')?.addEventListener('click', async function() {
+    const button = this;
+    const originalContent = button.innerHTML;
+    
+    // Cambiar el botón a estado de carga
+    button.disabled = true;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+    
+    try {
+        const response = await fetch('{{ url_for("add_to_profile") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                title: '{{ titulo }}'
+            })
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+            // Mostrar mensaje de éxito
+            button.classList.remove('btn-outline-primary');
+            button.classList.add('btn-success');
+            button.innerHTML = '<i class="fas fa-check-circle"></i> ¡Guardada!';
+            
+            // Actualizar el texto informativo
+            const infoText = button.nextElementSibling;
+            if (infoText) {
+                infoText.innerHTML = '<i class="fas fa-info-circle"></i> La revista ha sido añadida a tu colección';
+            }
+            
+            // Opcional: Recargar la página después de 1.5 segundos
+            setTimeout(() => {
+                location.reload();
+            }, 1500);
+        } else {
+            // Restaurar el botón y mostrar error
+            button.disabled = false;
+            button.innerHTML = originalContent;
+            
+            // Mostrar mensaje de error elegante
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'alert alert-danger mt-2';
+            errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${data.message || 'Error al guardar la revista'}`;
+            button.parentNode.appendChild(errorDiv);
+            
+            // Remover el mensaje de error después de 3 segundos
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 3000);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        button.disabled = false;
+        button.innerHTML = originalContent;
+        
+        // Mostrar mensaje de error
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'alert alert-danger mt-2';
+        errorDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Error de conexión. Por favor, intenta nuevamente.';
+        button.parentNode.appendChild(errorDiv);
+        
+        setTimeout(() => {
+            errorDiv.remove();
+        }, 3000);
+    }
+});
+</script>
 {% endblock %}
