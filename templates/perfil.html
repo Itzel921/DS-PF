@@ -1,105 +1,111 @@
 {% extends "base.html" %}
 
-{% block title %}Perfil - UNISON{% endblock %}
+{% block title %}Mi Colección - UNISON{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
     <div class="row">
         <div class="col-md-12">
-            <h1 class="mb-4">Mi Perfil</h1>
-            
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Información del Usuario</h5>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="mb-0">Mi Colección de Revistas</h1>
+                    <p class="text-muted">Bienvenido(a), {{ user }}</p>
                 </div>
-                <div class="card-body">
-                    <h2 class="h4">{{ user }}</h2>
+                <div class="text-end">
+                    <a href="{{ url_for('explorar') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-compass"></i> Explorar Más Revistas
+                    </a>
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Mis Revistas Guardadas</h5>
-                </div>
-                <div class="card-body">
-                    {% if revistas %}
-                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                        {% for revista in revistas %}
-                        <div class="col">
-                            <div class="card h-100">
-                                <div class="card-body">
-                                    <h5 class="card-title">
-                                        <a href="{{ url_for('revista_detalle', titulo=revista.titulo) }}" class="text-decoration-none">
-                                            {{ revista.titulo }}
-                                        </a>
-                                    </h5>
-                                    {% if revista.info.get('areas') %}
-                                    <div class="mb-2">
-                                        {% for area in revista.info.areas[:3] %}
-                                        <span class="badge bg-secondary">{{ area }}</span>
-                                        {% endfor %}
-                                    </div>
-                                    {% endif %}
-                                    {% if revista.scimagojr.get('h_index') %}
-                                    <p class="card-text">
-                                        <small class="text-muted">H-Index: {{ revista.scimagojr.h_index }}</small>
-                                    </p>
-                                    {% endif %}
-                                </div>
+            {% if revistas %}
+            <div class="alert alert-info" role="alert">
+                <i class="fas fa-info-circle"></i> 
+                Has guardado {{ revistas|length }} revista{{ 's' if revistas|length != 1 }} en tu colección
+            </div>
+
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                {% for revista in revistas %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        {% if revista.scimagojr.get('h_index') %}
+                        <div class="card-header bg-light">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">H-Index</small>
+                                <span class="badge bg-primary">{{ revista.scimagojr.h_index }}</span>
                             </div>
                         </div>
-                        {% endfor %}
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a href="{{ url_for('revista_detalle', titulo=revista.titulo) }}" 
+                                   class="text-decoration-none text-primary">
+                                    {{ revista.titulo }}
+                                </a>
+                            </h5>
+                            
+                            {% if revista.info.get('areas') %}
+                            <div class="mb-3">
+                                {% for area in revista.info.areas[:3] %}
+                                <span class="badge bg-secondary me-1">{{ area }}</span>
+                                {% endfor %}
+                                {% if revista.info.areas|length > 3 %}
+                                <small class="text-muted">+{{ revista.info.areas|length - 3 }} más</small>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+
+                            {% if revista.scimagojr.get('publisher') %}
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    <i class="fas fa-building"></i> {{ revista.scimagojr.publisher }}
+                                </small>
+                            </p>
+                            {% endif %}
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <div class="btn-group w-100">
+                                <a href="{{ url_for('revista_detalle', titulo=revista.titulo) }}" 
+                                   class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-info-circle"></i> Ver Detalles
+                                </a>
+                                {% if revista.scimagojr.get('url') %}
+                                <a href="{{ revista.scimagojr.url }}" 
+                                   target="_blank" 
+                                   class="btn btn-outline-secondary btn-sm">
+                                    <i class="fas fa-external-link-alt"></i> SCImago
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
-                    {% else %}
-                    <p class="text-muted">Aún no has guardado ninguna revista.</p>
-                    <a href="{{ url_for('explorar') }}" class="btn btn-primary">
-                        <i class="fas fa-search"></i> Explorar Revistas
-                    </a>
-                    {% endif %}
                 </div>
+                {% endfor %}
             </div>
-        </div>
-    </div>
-    <div class="row mt-4">
-        <div class="col-md-12">
+            {% else %}
             <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Comentarios Recientes</h5>
-                    <ul class="list-group">
-                        <li class="list-group-item">"Muy interesante el artículo sobre ciencias sociales." - Revista de Ciencias Sociales</li>
-                        <li class="list-group-item">"Gran aporte en el campo de la ingeniería." - Revista de Ingeniería</li>
-                        <li class="list-group-item">"Me ayudó mucho en mi investigación." - Revista de Ciencias Exactas</li>
-                    </ul>
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-bookmark fa-3x text-muted mb-3"></i>
+                    <h3>Tu colección está vacía</h3>
+                    <p class="text-muted">Explora las revistas científicas y guarda tus favoritas para acceder fácilmente.</p>
+                    <div class="mt-4">
+                        <a href="{{ url_for('explorar') }}" class="btn btn-primary">
+                            <i class="fas fa-compass"></i> Comenzar a Explorar
+                        </a>
+                        <a href="{{ url_for('areas') }}" class="btn btn-outline-secondary ms-2">
+                            <i class="fas fa-th-large"></i> Ver por Áreas
+                        </a>
+                    </div>
                 </div>
-            </div>
+            </div>            {% endif %}
         </div>
     </div>
-    <div class="row mt-4">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Archivos Guardados</h5>
-                    <ul class="list-group">
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span>Archivo 1 - Ciencias Sociales</span>
-                            <a href="{{ url_for('static', filename='datos/csv/areas/CIENCIAS_SOC RadGridExport.csv') }}" class="btn btn-primary btn-sm" target="_blank">Leer</a>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span>Archivo 2 - Ingeniería</span>
-                            <a href="{{ url_for('static', filename='datos/csv/areas/ING RadGridExport.csv') }}" class="btn btn-primary btn-sm" target="_blank">Leer</a>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span>Archivo 3 - Ciencias Exactas</span>
-                            <a href="{{ url_for('static', filename='datos/csv/areas/CIENCIAS_EXA RadGridExport.csv') }}" class="btn btn-primary btn-sm" target="_blank">Leer</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
+    
     <div class="row mt-4">
         <div class="col-md-12 text-center">
-            <a href="/logout" class="btn btn-danger">Cerrar sesión</a>
+            <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">
+                <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+            </a>
         </div>
     </div>
 </div>
