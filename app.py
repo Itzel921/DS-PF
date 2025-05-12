@@ -50,7 +50,12 @@ def areas():
 # Ruta para la página de catálogos
 @app.route('/catalogos')
 def catalogos():
-    return render_template('catalogos.html')
+    revistas, _ = cargar_datos()
+    # Obtener lista única de catálogos
+    catalogos = set()
+    for revista in revistas.values():
+        catalogos.update(revista['catalogos'])
+    return render_template('catalogos.html', catalogos=sorted(catalogos))
 
 # Ruta para la página de explorar
 @app.route('/explorar')

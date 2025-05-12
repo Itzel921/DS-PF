@@ -76,7 +76,7 @@ class ResultsCombiner:
 
     def merge_metadata(self, entry1, entry2):
         """
-        Combina los metadatos (áreas y catálogos) de dos entradas.
+        Combina los metadatos (áreas, catálogos y métricas) de dos entradas.
         Mantiene los datos principales de la entrada mejor.
         """
         # Combinar áreas sin duplicados
@@ -92,6 +92,11 @@ class ResultsCombiner:
         combined = dict(better_entry)
         combined['areas'] = areas
         combined['catalogos'] = catalogos
+        
+        # Agregar métricas de Resurchify si están disponibles
+        resurchify_metrics = entry1.get('resurchify_metrics', {}) or entry2.get('resurchify_metrics', {})
+        if resurchify_metrics:
+            combined['resurchify_metrics'] = resurchify_metrics
         
         return combined
 
