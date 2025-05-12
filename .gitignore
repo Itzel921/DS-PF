@@ -20,31 +20,52 @@ wheels/
 .installed.cfg
 *.egg
 
-# Archivos de caché
-datos/cache/
-datos/cache/*.html
+# Flask
+instance/
+.webassets-cache
+flask_session/
 
-# Virtual Environment
+# Datos y caché
+datos/cache/*.html
+debug_selenium.html
+datos/json/*_backup.json
+datos/json/temp_*.json
+
+# Entorno virtual
 venv/
 env/
 ENV/
+.env
+.venv
 
-# IDE
+# IDE y editores
 .idea/
 .vscode/
 *.swp
 *.swo
 .vs/
+*.code-workspace
+.history
 
 # Logs y bases de datos
 *.log
+logs/
+log/
 *.sqlite3
+*.sqlite
 *.db
 
-# Archivos temporales del sistema
+# Sistema operativo
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 
-# Archivos temporales del proyecto
-datos/json/revistas_scimagojr_backup.json
-debug_selenium.html
+# Configuración local
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
