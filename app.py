@@ -1,9 +1,15 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session
 import json
 import os
 from pathlib import Path
+from flask_session import Session
 
 app = Flask(__name__)
+
+# Configuración de la clave secreta para sesiones
+app.secret_key = 'clave_secreta_segura'
+app.config['SESSION_TYPE'] = 'filesystem'
+Session(app)
 
 # Cargar datos de revistas
 BASE_DIR = Path(__file__).parent
@@ -13,8 +19,18 @@ SCIMAGOJR_JSON = BASE_DIR / 'datos' / 'json' / 'revistas_scimagojr.json'
 def cargar_datos():
     with open(REVISTAS_JSON, 'r', encoding='utf-8') as f:
         revistas = json.load(f)
-    with open(SCIMAGOJR_JSON, 'r', encoding='utf-8') as f:
-        scimagojr = json.load(f)
+
+    if not SCIMAGOJR_JSON.exists():
+        print(f"Advertencia: El archivo {SCIMAGOJR_JSON} no existe.")
+        scimagojr = {}
+    else:
+        with open(SCIMAGOJR_JSON, 'r', encoding='utf-8') as f:
+            try:
+                scimagojr = json.load(f)
+            except json.JSONDecodeError:
+                print(f"Error: El archivo {SCIMAGOJR_JSON} no contiene un JSON válido.")
+                scimagojr = {}
+
     return revistas, scimagojr
 
 # Rutas principales
@@ -34,7 +50,12 @@ def areas():
 # Ruta para la página de catálogos
 @app.route('/catalogos')
 def catalogos():
-    return render_template('catalogos.html')
+    revistas, _ = cargar_datos()
+    # Obtener lista única de catálogos
+    catalogos = set()
+    for revista in revistas.values():
+        catalogos.update(revista['catalogos'])
+    return render_template('catalogos.html', catalogos=sorted(catalogos))
 
 # Ruta para la página de explorar
 @app.route('/explorar')
@@ -104,6 +125,61 @@ def revista_detalle(titulo):
                          titulo=titulo, 
                          revista=revista_info, 
                          scimagojr=scimagojr_info)
+
+# Ruta para iniciar sesión
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+
+        # Validar credenciales (esto es un ejemplo simple)
+        if email == 'usuario@ejemplo.com' and password == 'contraseña':
+            session['user'] = {
+                'name': 'Juan Pérez',
+                'email': email
+            }
+            return redirect(url_for('index'))  # Redirigir a la página de inicio
+        else:
+            return render_template('inicio_sesion.html', error='Credenciales incorrectas')
+
+    return render_template('inicio_sesion.html')
+
+# Ruta para el perfil
+@app.route('/perfil')
+def perfil():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+
+    user = session['user']
+    return render_template('perfil.html', user=user['name'])
+
+# Ruta para cerrar sesión
+@app.route('/logout')
+def logout():
+    session.pop('user', None)
+    return redirect(url_for('index'))
+
+@app.route('/add_to_profile', methods=['POST'])
+def add_to_profile():
+    if 'user' not in session:
+        return jsonify({"success": False, "message": "Usuario no autenticado."}), 401
+
+    data = request.get_json()
+    title = data.get('title')
+
+    if not title:
+        return jsonify({"success": False, "message": "Título no proporcionado."}), 400
+
+    # Simular agregar el artículo al perfil del usuario
+    user = session['user']
+    if 'saved_articles' not in user:
+        user['saved_articles'] = []
+
+    user['saved_articles'].append(title)
+    session['user'] = user
+
+    return jsonify({"success": True, "message": "Artículo agregado al perfil."})
 
 if __name__ == '__main__':
     app.run(debug=True)
