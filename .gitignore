@@ -20,6 +20,10 @@ wheels/
 .installed.cfg
 *.egg
 
+# Archivos de caché
+datos/cache/
+datos/cache/*.html
+
 # Virtual Environment
 venv/
 env/

@@ -49,10 +49,14 @@
                     <input class="form-control me-2" type="search" placeholder="Buscar revistas..." name="q">
                     <button class="btn btn-light" type="submit">Buscar</button>
                 </form>
+                {% if 'user' in session and 'name' in session['user'] %}
                 <span class="navbar-text text-white me-3">
                     <a href="/perfil" class="text-white text-decoration-none">Bienvenido, {{ session['user']['name'] }}</a>
                 </span>
                 <a href="/logout" class="btn btn-outline-light">Cerrar Sesión</a>
+                {% else %}
+                <a href="/login" class="btn btn-outline-light">Iniciar Sesión</a>
+                {% endif %}
             </div>
         </div>
     </nav>

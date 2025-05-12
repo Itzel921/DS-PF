@@ -4,44 +4,38 @@
 
 {% block content %}
 <!-- Hero Section -->
-<div class="jumbotron jumbotron-fluid text-white" style="background-image: url('/static/images/hero.jpg'); background-size: cover; background-position: center;">
+<div class="jumbotron jumbotron-fluid text-white mb-5" style="background-image: url('/static/images/hero.jpg'); background-size: cover; background-position: center;">
     <div class="container text-center">
         <h1 class="display-4" style="color: black; text-shadow: none;">Explora el Conocimiento</h1>
         <p class="lead" style="color: black;">Descubre revistas científicas de todo el mundo.</p>
-        <a href="{{ url_for('explorar') }}" class="btn btn-light btn-lg">Comenzar</a>
+        <!-- Search Bar -->
+        <form class="form-inline justify-content-center mt-4" action="{{ url_for('buscar') }}" method="get">
+            <input class="form-control mr-sm-2 mb-3" type="search" placeholder="Buscar revistas científicas..." aria-label="Buscar" name="query" required>
+            <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Buscar</button>
+        </form>
     </div>
 </div>
 
-<!-- Formulario de Inicio de Sesión -->
-{% if 'user' not in session %}
-<div class="container d-flex justify-content-center align-items-center mt-5" style="min-height: 50vh;">
-    <div class="card p-4 shadow" style="width: 100%; max-width: 400px;">
-        <h3 class="text-center text-primary mb-4">Iniciar Sesión</h3>
-        <form action="/login" method="post">
-            <div class="mb-3">
-                <label for="email" class="form-label">Correo Electrónico</label>
-                <input type="email" class="form-control" id="email" name="email" placeholder="ejemplo@unison.mx" required>
+<!-- Introductory Text -->
+<div class="row mb-5">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="background-color: var(--primary-color); color: white;">
+                <h5 class="card-title mb-0">Bienvenido al Sistema de Exploración de Revistas</h5>
             </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">Contraseña</label>
-                <input type="password" class="form-control" id="password" name="password" placeholder="********" required>
+            <div class="card-body">
+                <p>Este sistema está diseñado para facilitar la búsqueda y exploración de revistas científicas de todo el mundo. Aquí podrás encontrar información detallada sobre revistas indexadas en diferentes catálogos, explorar por áreas temáticas, y acceder a indicadores bibliométricos como el H-Index.</p>
+                <p>Además, te mantendremos informado con las últimas noticias y actualizaciones del mundo académico y científico. ¡Explora y descubre el conocimiento con nosotros!</p>
             </div>
-            <div class="d-grid">
-                <button type="submit" class="btn btn-primary">Ingresar</button>
-            </div>
-        </form>
-        <div class="text-center mt-3">
-            <a href="#" class="text-decoration-none">¿Olvidaste tu contraseña?</a>
         </div>
     </div>
 </div>
-{% endif %}
 
 <!-- Tarjetas de Navegación -->
 <div class="row text-center">
     <div class="col-md-4 mb-4">
         <div class="card h-100">
-            <div class="card-header bg-primary text-white">
+            <div class="card-header" style="background-color: var(--primary-color); color: white;">
                 <i class="fas fa-book fa-2x"></i>
                 <h5 class="card-title mt-2">Explorar por Áreas</h5>
             </div>
@@ -54,7 +48,7 @@
 
     <div class="col-md-4 mb-4">
         <div class="card h-100">
-            <div class="card-header bg-primary text-white">
+            <div class="card-header" style="background-color: var(--primary-color); color: white;">
                 <i class="fas fa-database fa-2x"></i>
                 <h5 class="card-title mt-2">Explorar por Catálogos</h5>
             </div>
@@ -67,13 +61,27 @@
 
     <div class="col-md-4 mb-4">
         <div class="card h-100">
-            <div class="card-header bg-primary text-white">
+            <div class="card-header" style="background-color: var(--primary-color); color: white;">
                 <i class="fas fa-font fa-2x"></i>
                 <h5 class="card-title mt-2">Explorar por Letra</h5>
             </div>
             <div class="card-body">
                 <p class="card-text">Navega alfabéticamente por todas las revistas disponibles en el sistema.</p>
                 <a href="{{ url_for('explorar') }}" class="btn btn-outline-primary">Explorar</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Noticias Section -->
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header" style="background-color: var(--primary-color); color: white;">
+                <i class="fas fa-newspaper fa-2x"></i>
+                <h5 class="card-title mt-2">Noticias</h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">Mantente informado con las últimas noticias y actualizaciones del mundo académico y científico.</p>
+                <a href="{{ url_for('newnoticias') }}" class="btn btn-outline-primary">Ver Noticias</a>
             </div>
         </div>
     </div>
@@ -100,10 +108,23 @@
     </div>
 </div>
 
-<!-- Pie de Página -->
-<footer class="bg-primary text-white text-center py-3 mt-4">
-    <p>&copy; 2025 Universidad de Sonora. Todos los derechos reservados.</p>
-    <a href="#" class="text-white mx-2">Política de privacidad</a>
-    <a href="#" class="text-white mx-2">Términos de uso</a>
-</footer>
+<!-- Noticias o Actualizaciones -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="background-color: var(--primary-color); color: white;">
+                <h5 class="card-title mb-0">Noticias y Actualizaciones</h5>
+            </div>
+            <div class="card-body">
+                <p>Mantente informado con las últimas noticias y actualizaciones del mundo académico y científico:</p>
+                <ul>
+                    <li><strong>Conferencia Internacional de Ciencias 2025:</strong> Se llevará a cabo del 15 al 20 de junio en Madrid, España.</li>
+                    <li><strong>Nueva Edición del Índice SJR:</strong> Ya está disponible la edición 2025 con datos actualizados.</li>
+                    <li><strong>Revistas Destacadas:</strong> Descubre las revistas más influyentes del mes en nuestra sección de destacados.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}

@@ -181,5 +181,9 @@ def add_to_profile():
 
     return jsonify({"success": True, "message": "Artículo agregado al perfil."})
 
+@app.route('/newnoticias')
+def newnoticias():
+    return render_template('Newnoticias.html')
+
 if __name__ == '__main__':
     app.run(debug=True)
