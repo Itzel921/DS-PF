@@ -20,30 +20,25 @@ wheels/
 .installed.cfg
 *.egg
 
-# Archivos de caché
-datos/cache/
-datos/cache/*.html
+# Flask
+instance/
+.webassets-cache
+flask_session/
 
-# Virtual Environment
+# Datos y caché
+datos/cache/*.html
+debug_selenium.html
+datos/json/*_backup.json
+datos/json/temp_*.json
+
+# Entorno virtual
 venv/
 env/
 ENV/
 .env
 .venv
 
-# Flask
-instance/
-.webassets-cache
-flask_session/
-
-# Archivos de caché y datos temporales
-datos/cache/
-*.html
-debug_selenium.html
-datos/json/*_backup.json
-datos/json/temp_*.json
-
-# IDE
+# IDE y editores
 .idea/
 .vscode/
 *.swp
@@ -60,7 +55,7 @@ log/
 *.sqlite
 *.db
 
-# Archivos del sistema operativo
+# Sistema operativo
 .DS_Store
 .DS_Store?
 ._*
@@ -69,7 +64,7 @@ log/
 ehthumbs.db
 Thumbs.db
 
-# Archivos de configuración local
+# Configuración local
 .env.local
 .env.development.local
 .env.test.local
