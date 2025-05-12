@@ -3,60 +3,87 @@
 {% block title %}Sistema de Exploración de Revistas UNISON{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-12 text-center mb-5">
-        <h1>Sistema de Exploración de Revistas Científicas</h1>
-        <p class="lead">Universidad de Sonora</p>
+<!-- Hero Section -->
+<div class="jumbotron jumbotron-fluid text-white" style="background-image: url('/static/images/hero.jpg'); background-size: cover; background-position: center;">
+    <div class="container text-center">
+        <h1 class="display-4" style="color: black; text-shadow: none;">Explora el Conocimiento</h1>
+        <p class="lead" style="color: black;">Descubre revistas científicas de todo el mundo.</p>
+        <a href="{{ url_for('explorar') }}" class="btn btn-light btn-lg">Comenzar</a>
     </div>
 </div>
 
-<div class="text-center">
-    <h1>Bienvenido al Sistema de Exploración de Revistas</h1>
-    <p class="lead">Explora, busca y conoce las revistas académicas disponibles en nuestro catálogo.</p>
+<!-- Formulario de Inicio de Sesión -->
+{% if 'user' not in session %}
+<div class="container d-flex justify-content-center align-items-center mt-5" style="min-height: 50vh;">
+    <div class="card p-4 shadow" style="width: 100%; max-width: 400px;">
+        <h3 class="text-center text-primary mb-4">Iniciar Sesión</h3>
+        <form action="/login" method="post">
+            <div class="mb-3">
+                <label for="email" class="form-label">Correo Electrónico</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="ejemplo@unison.mx" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Contraseña</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="********" required>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary">Ingresar</button>
+            </div>
+        </form>
+        <div class="text-center mt-3">
+            <a href="#" class="text-decoration-none">¿Olvidaste tu contraseña?</a>
+        </div>
+    </div>
 </div>
+{% endif %}
 
-<div class="row">
+<!-- Tarjetas de Navegación -->
+<div class="row text-center">
     <div class="col-md-4 mb-4">
         <div class="card h-100">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Explorar por Áreas</h5>
+            <div class="card-header bg-primary text-white">
+                <i class="fas fa-book fa-2x"></i>
+                <h5 class="card-title mt-2">Explorar por Áreas</h5>
             </div>
             <div class="card-body">
                 <p class="card-text">Navega por las diferentes áreas del conocimiento para encontrar revistas especializadas.</p>
-                <a href="{{ url_for('areas') }}" class="btn btn-primary">Ver Áreas</a>
+                <a href="{{ url_for('areas') }}" class="btn btn-outline-primary">Ver Áreas</a>
             </div>
         </div>
     </div>
 
     <div class="col-md-4 mb-4">
         <div class="card h-100">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Explorar por Catálogos</h5>
+            <div class="card-header bg-primary text-white">
+                <i class="fas fa-database fa-2x"></i>
+                <h5 class="card-title mt-2">Explorar por Catálogos</h5>
             </div>
             <div class="card-body">
                 <p class="card-text">Encuentra revistas indexadas en diferentes catálogos y bases de datos.</p>
-                <a href="{{ url_for('catalogos') }}" class="btn btn-primary">Ver Catálogos</a>
+                <a href="{{ url_for('catalogos') }}" class="btn btn-outline-primary">Ver Catálogos</a>
             </div>
         </div>
     </div>
 
     <div class="col-md-4 mb-4">
         <div class="card h-100">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Explorar por Letra</h5>
+            <div class="card-header bg-primary text-white">
+                <i class="fas fa-font fa-2x"></i>
+                <h5 class="card-title mt-2">Explorar por Letra</h5>
             </div>
             <div class="card-body">
                 <p class="card-text">Navega alfabéticamente por todas las revistas disponibles en el sistema.</p>
-                <a href="{{ url_for('explorar') }}" class="btn btn-primary">Explorar</a>
+                <a href="{{ url_for('explorar') }}" class="btn btn-outline-primary">Explorar</a>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Acerca del Sistema -->
 <div class="row mt-4">
     <div class="col-md-12">
         <div class="card">
-            <div class="card-header">
+            <div class="card-header bg-dark text-white">
                 <h5 class="card-title mb-0">Acerca del Sistema</h5>
             </div>
             <div class="card-body">
@@ -72,4 +99,11 @@
         </div>
     </div>
 </div>
+
+<!-- Pie de Página -->
+<footer class="bg-primary text-white text-center py-3 mt-4">
+    <p>&copy; 2025 Universidad de Sonora. Todos los derechos reservados.</p>
+    <a href="#" class="text-white mx-2">Política de privacidad</a>
+    <a href="#" class="text-white mx-2">Términos de uso</a>
+</footer>
 {% endblock %}

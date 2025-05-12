@@ -16,39 +16,43 @@
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
+    <nav class="navbar navbar-expand-lg navbar-light bg-primary">
         <div class="container">
-            <a class="navbar-brand" href="/">
-                <img src="{{ url_for('static', filename='images/logo_unison.png') }}" alt="Logo Universidad de Sonora" height="50">
+            <a class="navbar-brand text-white" href="/">
+                <img src="{{ url_for('static', filename='images/unison_logo.png') }}" alt="Logo Universidad de Sonora" height="50">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
+                <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Inicio</a>
+                        <a class="nav-link text-white" href="/">Inicio</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/areas">Áreas</a>
+                        <a class="nav-link text-white" href="/areas">Áreas</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/catalogos">Catálogos</a>
+                        <a class="nav-link text-white" href="/catalogos">Catálogos</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/explorar">Explorar</a>
+                        <a class="nav-link text-white" href="/explorar">Explorar</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/buscar">Búsqueda</a>
+                        <a class="nav-link text-white" href="/buscar">Búsqueda</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/creditos">Créditos</a>
+                        <a class="nav-link text-white" href="/creditos">Créditos</a>
                     </li>
                 </ul>
-                <form class="d-flex" action="{{ url_for('buscar') }}" method="get">
+                <form class="d-flex me-3" action="{{ url_for('buscar') }}" method="get">
                     <input class="form-control me-2" type="search" placeholder="Buscar revistas..." name="q">
-                    <button class="btn btn-outline-light" type="submit">Buscar</button>
+                    <button class="btn btn-light" type="submit">Buscar</button>
                 </form>
+                <span class="navbar-text text-white me-3">
+                    <a href="/perfil" class="text-white text-decoration-none">Bienvenido, {{ session['user']['name'] }}</a>
+                </span>
+                <a href="/logout" class="btn btn-outline-light">Cerrar Sesión</a>
             </div>
         </div>
     </nav>
